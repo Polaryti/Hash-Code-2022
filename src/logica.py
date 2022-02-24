@@ -3,18 +3,24 @@ from output import output_process
 
 
 
-def skill_possible(project_skills, pearson_skills):
+def skill_possible(project_skills, pearson_skills, workers):
     for project_skill, skill_score in project_skills.items():
-        for pearson_skill_, score in pearson_skills.items():
-            if project_skill == pearson_skill_ and skill_score <= score:
+        for pearson_skill_, person_score in pearson_skills.items():
+            if project_skill == pearson_skill_ and person_score >= skill_score :
                 return project_skill
+            elif project_skill == pearson_skill_ and skill_score - 1 == person_score and type(workers) == dict :
+                for worker_skill, worker_score in workers.items() :
+                    if worker_skill == project_skill and worker_score >= skill_score :
+                        pearson_skills[pearson_skill_] += 1
+                        return project_skill
+                    
     return False
 
 def is_possible(project, people, schedule, day, duration):
     workers = [0] * len(list(project['roles'].keys()))
     for p, skills in people.items():
         if schedule[p][day] == 0:
-            sk = skill_possible(project['roles'], skills[0])
+            sk = skill_possible(project['roles'], skills[0], workers)
             if not sk:
                 pass
             else:
@@ -33,7 +39,7 @@ if __name__ == "__main__":
 
     people, projects = input_process(file)
     for p in list(people.keys()):
-        schedule[p] = [0] * 500000
+        schedule[p] = [0] * 50000
     
     day = 0
     for _, pro in projects.items():
