@@ -1,5 +1,4 @@
 from sqlalchemy import true
-
 from input import input_process
 from output import output_process
 
@@ -14,18 +13,23 @@ def skill_possible(project_skills, pearson_skills):
 
 def is_possible(project, people, schedule, day, duration):
     workers = [0] * len(list(project['roles'].keys()))
+    to_delete_again = []
     for p, skills in people.items():
         if day not in schedule[p]:
             sk = skill_possible(project['roles'], skills[0])
             if sk != []:
                 workers[list(project['roles'].keys()).index(sk)] = p
-                project['roles'].pop(sk)
+                to_delete_again.append(sk)
                 for i in range(duration):
                     schedule[p][day + i] = 1
-        if project['roles'] == {} and 0 not in workers and workers != []:
-            return workers
+    
 
-    return False
+    if len(project['roles']) == len(to_delete_again) and 0 not in workers:
+        for t in to_delete_again:
+            project['roles'].pop(t)
+        return workers
+    else:
+        return False
 
 
 if __name__ == "__main__":
