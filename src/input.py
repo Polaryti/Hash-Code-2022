@@ -3,6 +3,11 @@ file = 'data/a_an_example.in.txt'
 people = {}
 projects = {}
 
+
+def sort_dict_by_sub_value_dict(d):
+    return sorted(d.items(), key=lambda kv: kv[1]['score'])
+
+
 if __name__ == "__main__":
     with open(file, 'r') as f:
         c, p = f.readline().split()
@@ -25,5 +30,7 @@ if __name__ == "__main__":
 
             for role in range(int(roles)):
                 projects[name]['roles'].append(f.readline().strip().split())
+
+    projects = sort_dict_by_sub_value_dict(projects)
     print(people)
     print(projects)
