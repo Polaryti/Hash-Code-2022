@@ -1,36 +1,41 @@
-file = 'data/a_an_example.in.txt'
-
 people = {}
 projects = {}
 
 
 def sort_dict_by_sub_value_dict(d):
-    return sorted(d.items(), key=lambda kv: kv[1]['score'])
+    return dict(sorted(d.items(), key=lambda kv: kv[1]['score']))
 
 
-if __name__ == "__main__":
+def input_process(file):
+    people = {}
+    projects = {}
+
     with open(file, 'r') as f:
-        c, p = f.readline().split()
+        c, p = f.readline().split(" ")
         for pearson in range(int(c)):
-            name, n_skills = f.readline().split()
+            name, n_skills = f.readline().split(" ")
             if name not in people:
                 people[name] = []
             for skill in range(int(n_skills)):
-                people[name].append(f.readline().strip().split())
+                skill_name, skill_score = f.readline().split(" ")
+                people[name].append({skill_name: int(skill_score)})
         for project in range(int(p)):
-            name, days, score, best, roles = f.readline().strip().split()
+            name, days, score, best, roles = f.readline().strip().split(" ")
             if name not in projects:
                 projects[name] = {
                     'name': name,
                     'days': int(days),
                     'score': int(score),
                     'best': int(best),
-                    'roles': []
+                    'roles': {}
                 }
 
             for role in range(int(roles)):
-                projects[name]['roles'].append(f.readline().strip().split())
+                role_name, role_score = f.readline().split(" ")
+                projects[name]['roles'][role_name] = int(role_score)
 
     projects = sort_dict_by_sub_value_dict(projects)
-    print(people)
-    print(projects)
+    # print(people)
+    # print(projects)
+
+    return people, projects
