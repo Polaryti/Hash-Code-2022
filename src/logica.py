@@ -1,6 +1,6 @@
+from sqlalchemy import true
 from input import input_process
 from output import output_process
-
 
 
 def skill_possible(project_skills, pearson_skills):
@@ -10,10 +10,11 @@ def skill_possible(project_skills, pearson_skills):
                 return project_skill
     return False
 
+
 def is_possible(project, people, schedule, day, duration):
     workers = [0] * len(list(project['roles'].keys()))
     for p, skills in people.items():
-        if schedule[p][day] == 0:
+        if day not in schedule[p]:
             sk = skill_possible(project['roles'], skills[0])
             if not sk:
                 pass
@@ -22,9 +23,11 @@ def is_possible(project, people, schedule, day, duration):
                 del project['roles'][sk]
                 for i in range(duration):
                     schedule[p][day + i] = 1
-        if project['roles'] == {} and 0 not in workers:
+        if project['roles'] == {} and 0 not in workers and workers != []:
             return workers
-    return False              
+
+    return False
+
 
 if __name__ == "__main__":
     schedule = {}
@@ -33,18 +36,28 @@ if __name__ == "__main__":
 
     people, projects = input_process(file)
     for p in list(people.keys()):
-        schedule[p] = [0] * 500000
-    
+        schedule[p] = {}
+
+    # first_iteration = True
+    # to_delete = []
+    # i = 100
+    # while first_iteration or i > 0:
+        # i -= 1
+        # first_iteration = False
     day = 0
-    for _, pro in projects.items():
-        duration = int(pro['days'])
-        res = is_possible(pro, people, schedule, day, duration)
+    to_delete = []
+    for pro in list(projects.values()):
+        if pro['name'] not in to_delete:
+            duration = int(pro['days'])
+            res = is_possible(pro, people, schedule, day, duration)
 
-        if res is not False:
-            solution[pro['name']] = res
+            if res is not False:
+                solution[pro['name']] = res
+                to_delete.append(pro['name'])
 
-        day += duration
+            day += duration
 
-        
+        # for delete in to_delete:
+        #     del projects[delete]
+
     output_process(solution, file)
-

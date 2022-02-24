@@ -1,10 +1,11 @@
+import random
+
 people = {}
 projects = {}
 
 
 def sort_dict_by_sub_value_dict(d):
     return dict(sorted(d.items(), key=lambda kv: kv[1]['score']))
-
 
 def input_process(file):
     people = {}
@@ -34,6 +35,9 @@ def input_process(file):
                 role_name, role_score = f.readline().split(" ")
                 projects[name]['roles'][role_name] = int(role_score)
 
+    # l = list(people.items())
+    # random.shuffle(l)
+    # people = dict(l)
     projects = sort_dict_by_sub_value_dict(projects)
     # print(people)
     # print(projects)
